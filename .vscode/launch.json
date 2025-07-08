@@ -1,0 +1,32 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "debugpy",
+      "request": "launch",
+      "name": "Launch NewProject with Uvicorn (Debug)",
+      "module": "uvicorn", // This tells debugpy to run 'uvicorn' as a module
+      "args": [            // These are the arguments passed to uvicorn
+        "main:app",
+        "--reload"
+      ],
+      "python": "${workspaceFolder}/fastapivenv/bin/python",
+      "cwd": "${workspaceFolder}" // Explicitly set current working directory
+    },
+    {
+      "type": "debugpy",
+      "request": "attach",
+      "name": "Attach to NewProject main.py",
+      "connect": {
+        "host": "localhost",
+        "port": 5678
+      },
+      "pathMappings": [
+        {
+          "localRoot": "${workspaceFolder}/NewProject",
+          "remoteRoot": "/app"
+        }
+      ]
+    }
+  ]
+}
