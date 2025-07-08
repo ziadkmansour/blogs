@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, status, HTTPException
 from . import models, schemas
 from .database import engine, SessionLocal
 from sqlalchemy.orm import Session
+from .utils import PasswordHasher
 
 
 def get_db():
@@ -12,6 +13,7 @@ def get_db():
         db.close()
 
 models.Base.metadata.create_all(bind=engine)
+hasher = PasswordHasher()
 
 app = FastAPI()
 
@@ -64,3 +66,11 @@ def update_blog(blog_id: int, blog: schemas.Blog, db: Session = Depends(get_db))
 
     updated_blog = db.query(models.Blog).filter(models.Blog.id == blog_id).first()
     return updated_blog
+
+@app.post("/user", status_code=status.HTTP_201_CREATED, response_model=schemas.User)
+def create_user(user: schemas.User, db: Session = Depends(get_db)):
+    new_user = models.User(**user.model_dump(exclude={"password"}), password=hasher.hash(user.password))
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return new_user
