@@ -1,5 +1,3 @@
-# security.py
-
 from passlib.context import CryptContext
 
 class PasswordHasher:
